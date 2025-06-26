@@ -1,6 +1,7 @@
 package com.engeto.Genesis.Resources.repository;
 
 import com.engeto.Genesis.Resources.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 

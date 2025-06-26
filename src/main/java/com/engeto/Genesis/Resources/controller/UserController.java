@@ -1,6 +1,7 @@
 package com.engeto.Genesis.Resources.controller;
 
 import com.engeto.Genesis.Resources.dto.UserDTO;
+import com.engeto.Genesis.Resources.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

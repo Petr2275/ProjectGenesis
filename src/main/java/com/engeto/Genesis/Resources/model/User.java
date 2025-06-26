@@ -1,5 +1,6 @@
 package com.engeto.Genesis.Resources.model;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
