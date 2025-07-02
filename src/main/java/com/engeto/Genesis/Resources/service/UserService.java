@@ -1,47 +1,64 @@
 package com.engeto.Genesis.Resources.service;
 
-import com.engeto.Genesis.Resources.dto.UserDTO;
-import com.engeto.Genesis.Resources.mapper.UserMapper;
+import com.engeto.Genesis.Resources.dto.CreateUserRequest;
 import com.engeto.Genesis.Resources.model.User;
 import com.engeto.Genesis.Resources.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.stereotype.Service;
+
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Service
+@Data
 public class UserService {
-    private final UserRepository userRepository;
-    private final UserMapper mapper;
 
-    public UserService(UserRepository userRepository, UserMapper mapper) {
-        this.userRepository = userRepository;
-        this.mapper = mapper;
+    @Autowired
+    private UserRepository repository;
+
+    public User create(CreateUserRequest request) throws IOException {
+        if (repository.existsByPersonId(request.getPersonId())) {
+            throw new IllegalArgumentException("PersonID už existuje.");
+        }
+
+        if (!getValidPersonIds().contains(request.getPersonId())) {
+            throw new IllegalArgumentException("Neplatné PersonID.");
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        User user = new User(null, request.getName(), request.getSurname(), request.getPersonId(), uuid);
+        repository.save(user);
+        return user;
     }
 
-    public List<UserDTO> getAllUsers(boolean detail) {
-        return userRepository.findAll().stream()
-                .map(mapper::toDto)
-                .collect(Collectors.toList());
+    public List<User> getAll(boolean detail) {
+        return repository.findAll(detail);
     }
 
-    public UserDTO getUser(Long id, boolean detail) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-        return mapper.toDto(user);
+    public User getOne(Long id, boolean detail) {
+        return repository.findById(id, detail)
+                .orElseThrow(() -> new NoSuchElementException("Uživatel nenalezen."));
     }
 
-    public UserDTO createUser(UserDTO userDTO) {
-        User user = mapper.toEntity(userDTO);
-        return mapper.toDto(userRepository.save(user));
+    public User update(User user) {
+        repository.update(user);
+        return user;
     }
 
-    public UserDTO updateUser(UserDTO userDTO) {
-        User user = mapper.toEntity(userDTO);
-        return mapper.toDto(userRepository.save(user));
+    public void delete(Long id) {
+        repository.delete(id);
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    private Set<String> getValidPersonIds() throws IOException {
+        return Files.lines(Paths.get("dataPersonId.txt")).collect(Collectors.toSet());
     }
 }
-

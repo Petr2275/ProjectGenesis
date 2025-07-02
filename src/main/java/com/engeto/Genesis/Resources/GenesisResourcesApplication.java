@@ -16,7 +16,7 @@ public class GenesisResourcesApplication {
 
 		Statement statement = connection .createStatement();
 
-		ResultSet resultSet = statement.executeQuery();
+		//ResultSet resultSet = statement.executeQuery();
 
 
 

@@ -1,9 +1,15 @@
 package com.engeto.Genesis.Resources.controller;
 
-import com.engeto.Genesis.Resources.dto.UserDTO;
+import com.engeto.Genesis.Resources.dto.CreateUserRequest;
+import com.engeto.Genesis.Resources.model.User;
 import com.engeto.Genesis.Resources.service.UserService;
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -16,29 +22,30 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PostMapping
+    public ResponseEntity<User> createUser(@Valid @RequestBody CreateUserRequest request) throws IOException {
+        User user = userService.create(request);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
     @GetMapping
-    public List<UserDTO> getAllUsers(@RequestParam(defaultValue = "false") boolean detail) {
-        return userService.getAllUsers(detail);
+    public ResponseEntity<List<User>> getAll(@RequestParam(defaultValue = "false") boolean detail) {
+        return ResponseEntity.ok(userService.getAll(detail));
     }
 
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable Long id,
-                               @RequestParam(defaultValue = "false") boolean detail) {
-        return userService.getUser(id, detail);
-    }
-
-    @PostMapping
-    public UserDTO createUser(@RequestBody UserDTO userDTO) {
-        return userService.createUser(userDTO);
+    public ResponseEntity<User> getOne(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean detail) {
+        return ResponseEntity.ok(userService.getOne(id, detail));
     }
 
     @PutMapping
-    public UserDTO updateUser(@RequestBody UserDTO userDTO) {
-        return userService.updateUser(userDTO);
+    public ResponseEntity<User> update(@Valid @RequestBody User updateRequest) {
+        return ResponseEntity.ok(userService.update(updateRequest));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
