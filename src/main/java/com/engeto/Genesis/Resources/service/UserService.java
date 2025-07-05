@@ -17,6 +17,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Data
@@ -25,7 +26,9 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
+
     public User create(CreateUserRequest request) throws IOException {
+
         if (repository.existsByPersonId(request.getPersonId())) {
             throw new IllegalArgumentException("PersonID už existuje.");
         }
@@ -59,6 +62,9 @@ public class UserService {
     }
 
     private Set<String> getValidPersonIds() throws IOException {
-        return Files.lines(Paths.get("dataPersonId.txt")).collect(Collectors.toSet());
+        try (Stream<String> lines = Files.lines(Paths.get("dataPersonId.txt"))) {
+            return lines.collect(Collectors.toSet());
+        }
     }
+
 }

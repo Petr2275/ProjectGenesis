@@ -13,7 +13,11 @@ import java.util.Optional;
 public class UserRepository {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
+
+    public UserRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     public void save(User user) {
         String sql = "INSERT INTO users (name, surname, person_id, uuid) VALUES (?, ?, ?, ?)";
