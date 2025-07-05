@@ -4,6 +4,7 @@ import com.engeto.Genesis.Resources.dto.CreateUserRequest;
 import com.engeto.Genesis.Resources.model.User;
 import com.engeto.Genesis.Resources.repository.UserRepository;
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+@Getter
 @Service
 @Data
 public class UserService {

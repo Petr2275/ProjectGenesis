@@ -6,7 +6,9 @@ package com.engeto.Genesis.Resources.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
+import lombok.Getter;
+@NotBlank
+@Getter
 @Data
 public class CreateUserRequest {
     @NotBlank
@@ -18,4 +20,5 @@ public class CreateUserRequest {
     @NotBlank
     @Size(min = 12, max = 12)
     private String personId;
+
 }
