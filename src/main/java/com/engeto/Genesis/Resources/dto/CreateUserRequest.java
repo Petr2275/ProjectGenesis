@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
-@NotBlank
+
 @Getter
 @Data
 public class CreateUserRequest {

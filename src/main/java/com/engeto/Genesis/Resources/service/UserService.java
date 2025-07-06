@@ -14,14 +14,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 @Getter
 @Service
 @Data
@@ -32,20 +31,22 @@ public class UserService {
 
 
     public User create(CreateUserRequest request) throws IOException {
-
-        if (repository.existsByPersonId(request.getPersonId())) {
-            throw new IllegalArgumentException("PersonID už existuje.");
+        if (!getValidPersonIds().contains(request.getPersonId())) {
+            throw new IllegalArgumentException("Zadaný personId není v seznamu povolených hodnot.");
         }
 
-        if (!getValidPersonIds().contains(request.getPersonId())) {
-            throw new IllegalArgumentException("Neplatné PersonID.");
+        // Duplicitní kontrola před uložením
+        if (repository.existsByPersonId(request.getPersonId())) {
+            throw new IllegalArgumentException("Uživatel s tímto personId již existuje.");
         }
 
         String uuid = UUID.randomUUID().toString();
         User user = new User(null, request.getName(), request.getSurname(), request.getPersonId(), uuid);
-        repository.save(user);
+        Long id = repository.save(user);
+        user.setId(id);
         return user;
     }
+
 
     public List<User> getAll(boolean detail) {
         return repository.findAll(detail);
